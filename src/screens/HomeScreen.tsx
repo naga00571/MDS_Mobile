@@ -8,6 +8,7 @@ import {
 } from 'react-native-safe-area-context';
 import React from 'react';
 import {
+  Image,
   StatusBar,
   StyleSheet,
   Text,
@@ -29,6 +30,16 @@ function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+
+      <Image
+        source={require('../assets/images/MDS_app_background2.png')}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+     />
+
+    <View style={styles.content}>
+
+
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
@@ -81,7 +92,10 @@ function HomeScreen() {
         {/* POC ADMIN */}
         {isPocAdmin && (
           <>
-            <TouchableOpacity style={styles.linkButton}>
+            <TouchableOpacity 
+              style={styles.linkButton}
+              onPress={() => navigation.navigate('CommunityMilkAvailability')}
+            >
               <Text style={styles.linkIcon}>🥛</Text>
               <Text style={styles.linkText}>Milk Availability</Text>
             </TouchableOpacity>
@@ -112,30 +126,41 @@ function HomeScreen() {
             >
               <Text style={styles.linkIcon}>🏘️</Text>
               <Text style={styles.linkText}>Community Details</Text>
+              <Text style={styles.linkArrow}>›</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.linkButton}>
               <Text style={styles.linkIcon}>👥</Text>
               <Text style={styles.linkText}>User Management</Text>
+              <Text style={styles.linkArrow}>›</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.linkButton}>
+            <TouchableOpacity 
+              style={styles.linkButton}
+              onPress={() => navigation.navigate('CommunityMilkAvailability')}
+            >
               <Text style={styles.linkIcon}>🥛</Text>
               <Text style={styles.linkText}>Milk Availability</Text>
+              <Text style={styles.linkArrow}>›</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.linkButton}>
               <Text style={styles.linkIcon}>📋</Text>
               <Text style={styles.linkText}>Bookings</Text>
+              <Text style={styles.linkArrow}>›</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.linkButton}>
               <Text style={styles.linkIcon}>👤</Text>
               <Text style={styles.linkText}>My Profile</Text>
+              <Text style={styles.linkArrow}>›</Text>
             </TouchableOpacity>
           </>
         )}
       </View>
+
+
+    </View>
     </SafeAreaView>
   );
 }
@@ -143,13 +168,23 @@ function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F7FA',
+    // backgroundColor: '#F5F7FA',
+  },
+
+  content: {
+    flex: 1,
+  },
+
+  backgroundImage: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
   },
 
   header: {
     paddingHorizontal: 20,
     paddingVertical: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'transparent',
   },
 
   headerRow: {
@@ -169,11 +204,12 @@ const styles = StyleSheet.create({
   appTitle: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: '#1B5E20',
   },
 
   welcomeText: {
     fontSize: 16,
-    marginTop: 5,
+    marginTop: 25,
   },
 
   descriptionContainer: {
@@ -202,13 +238,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 12,
+    color: '#1565C0',
   },
 
   linkButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    paddingVertical: 16,
+    paddingVertical: 8,
     paddingHorizontal: 18,
     borderRadius: 10,
     marginBottom: 10,
@@ -223,6 +260,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+
+  linkArrow: {
+    marginLeft: 'auto',
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1565C0',
+  }
 });
 
 export default HomeScreen;

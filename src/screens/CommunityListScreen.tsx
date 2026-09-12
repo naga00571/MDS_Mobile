@@ -4,6 +4,7 @@ import React, {useCallback, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -82,6 +83,13 @@ function CommunityListScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      
+      <Image
+        source={require('../assets/images/MDS_app_background2.png')}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      />
+
 
       {/* Header */}
       <View style={styles.header}>
@@ -187,6 +195,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
 
+  backgroundImage: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+
   header: {
     minHeight: 65,
     paddingHorizontal: 16,
@@ -201,6 +219,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 19,
     fontWeight: 'bold',
+    color: '#1B5E20',
   },
 
   headerLeft: {
@@ -269,6 +288,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 8,
+    color: '#1B5E20',
   },
 
   address: {
@@ -279,11 +299,13 @@ const styles = StyleSheet.create({
   poc: {
     fontSize: 14,
     fontWeight: '600',
+    color: '#1565C0',
   },
 
   pocNumber: {
     fontSize: 14,
     marginTop: 4,
+    color: '#444444',
   },
 });
 

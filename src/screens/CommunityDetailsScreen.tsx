@@ -3,6 +3,7 @@ import {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -139,10 +140,20 @@ function CommunityDetailsScreen({route, navigation}: Props) {
 
   return (
     <SafeAreaView style={styles.container}>
+
+      <Image
+        source={require('../assets/images/MDS_app_background2.png')}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      />
+
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
+
+
+
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity
@@ -252,6 +263,16 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
 
+  backgroundImage: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+
   header: {
     minHeight: 65,
     paddingHorizontal: 16,
@@ -265,6 +286,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: '#1B5E20',
   },
 
   backButton: {

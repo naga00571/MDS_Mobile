@@ -24,6 +24,8 @@ import type {RootStackParamList} from '../../App';
 
 import type {Community} from '../types/community';
 
+import {API_BASE_URL} from '../api/apiConfig';
+
 // interface Community {
 //   id: number;
 //   community_name: string;
@@ -49,7 +51,7 @@ function CommunityListScreen() {
       setIsLoading(true);
 
       const response = await fetch(
-        'http://10.0.2.2:8000/api/community/',
+        `${API_BASE_URL}/api/community/`,
       );
 
       if (!response.ok) {

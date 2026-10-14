@@ -6,7 +6,7 @@ import type { RootStackParamList } from '../../App';
 import {
   SafeAreaView,
 } from 'react-native-safe-area-context';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   StatusBar,
@@ -16,13 +16,50 @@ import {
   View,
 } from 'react-native';
 
-const userRole = 'CUSTOMER';
+
+import {
+  getUserFirstName,
+  getUserLastName,
+  getUserRole,
+  clearAuthData,
+} from '../auth/authStorage';
+
+//const userRole = 'CUSTOMER';
 
 function HomeScreen() {
   const navigation =
   useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  const userRole = 'SUPER_ADMIN';
+  const handleLogout = async () => {
+    await clearAuthData();
+    navigation.replace('LoginWithPasscode');
+  };
+
+
+  //const userRole = 'SUPER_ADMIN';
+
+  const [userFirstName, setUserFirstName] = useState('');
+  const [userLastName, setUserLastName] = useState('');
+  const [userRole, setUserRole] = useState('');
+
+  useEffect(() => {
+    const loadUserDetails = async () => {
+      const firstName = await getUserFirstName();
+      const lastName = await getUserLastName();
+      const role = await getUserRole();
+
+      console.log('HOME - FIRST NAME:', firstName);
+      console.log('HOME - LAST NAME:', lastName);
+      console.log('HOME - USER ROLE:', role);
+      
+
+      setUserFirstName(firstName ?? '');
+      setUserLastName(lastName ?? '');
+      setUserRole(role ?? '');
+    };
+
+    loadUserDetails();
+  }, []);
 
   const isCustomer = userRole === 'CUSTOMER';
   const isPocAdmin = userRole === 'POC_ADMIN';
@@ -46,11 +83,11 @@ function HomeScreen() {
       <View style={styles.header}>
         <View style={styles.headerRow}>
             <Text style={styles.appTitle}>🥛 MILK DELIVERY</Text>
-            {!isCustomer && (
+            {/* {!isCustomer && ( */}
                 <Text style={styles.roleBadge}>{userRole}</Text>
-            )}
+            {/* )} */}
         </View>
-        <Text style={styles.welcomeText}>Welcome</Text>
+        <Text style={styles.welcomeText}>Hi, {userFirstName || 'NO FIRST NAME'}</Text>
       </View>
 
       {/* Milk & Dairy Description */}
@@ -72,12 +109,18 @@ function HomeScreen() {
         {/* CUSTOMER */}
         {isCustomer && (
           <>
-            <TouchableOpacity style={styles.linkButton}>
+            <TouchableOpacity
+              style={styles.linkButton}
+              onPress={() => navigation.navigate('BookItems0')}
+            >
               <Text style={styles.linkIcon}>🥛</Text>
               <Text style={styles.linkText}>Book Milk</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.linkButton}>
+            <TouchableOpacity 
+              style={styles.linkButton}
+              onPress={() => navigation.navigate('Bookings')}
+            >
               <Text style={styles.linkIcon}>📋</Text>
               <Text style={styles.linkText}>My Bookings</Text>
             </TouchableOpacity>
@@ -86,34 +129,68 @@ function HomeScreen() {
               <Text style={styles.linkIcon}>👤</Text>
               <Text style={styles.linkText}>My Profile</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.linkButton}
+              onPress={handleLogout}
+            >
+              <Text style={styles.linkIcon}>🚪</Text>
+              <Text style={styles.linkText}>Logout</Text>
+              <Text style={styles.linkArrow}>›</Text>
+            </TouchableOpacity>
+
           </>
         )}
+        {/* end of CUSTOMER links */}
 
         {/* POC ADMIN */}
         {isPocAdmin && (
           <>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.linkButton}
-              onPress={() => navigation.navigate('CommunityMilkAvailability')}
+              onPress={() => navigation.navigate('CommunityStockEntry')}
             >
               <Text style={styles.linkIcon}>🥛</Text>
-              <Text style={styles.linkText}>Milk Availability</Text>
+              <Text style={styles.linkText}>Stock Entry</Text>
+              <Text style={styles.linkArrow}>›</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.linkButton}
+              onPress={() => navigation.navigate('BookItems0')}
+            >
+              <Text style={styles.linkIcon}>🥛</Text>
+              <Text style={styles.linkText}>Book Items</Text>
+              <Text style={styles.linkArrow}>›</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.linkButton}>
               <Text style={styles.linkIcon}>📋</Text>
               <Text style={styles.linkText}>Today's Bookings</Text>
+              <Text style={styles.linkArrow}>›</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.linkButton}>
               <Text style={styles.linkIcon}>🏘️</Text>
               <Text style={styles.linkText}>Community Details</Text>
+              <Text style={styles.linkArrow}>›</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.linkButton}>
               <Text style={styles.linkIcon}>👤</Text>
               <Text style={styles.linkText}>My Profile</Text>
+              <Text style={styles.linkArrow}>›</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.linkButton}
+              onPress={handleLogout}
+            >
+              <Text style={styles.linkIcon}>🚪</Text>
+              <Text style={styles.linkText}>Logout</Text>
+              <Text style={styles.linkArrow}>›</Text>
+            </TouchableOpacity>
+
           </>
         )}
 
@@ -129,22 +206,37 @@ function HomeScreen() {
               <Text style={styles.linkArrow}>›</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.linkButton}>
+            <TouchableOpacity 
+              style={styles.linkButton}
+              onPress={() => navigation.navigate('UserManagement')}
+            >
               <Text style={styles.linkIcon}>👥</Text>
               <Text style={styles.linkText}>User Management</Text>
               <Text style={styles.linkArrow}>›</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.linkButton}
-              onPress={() => navigation.navigate('CommunityMilkAvailability')}
+              onPress={() => navigation.navigate('CommunityStockEntry')}
             >
               <Text style={styles.linkIcon}>🥛</Text>
-              <Text style={styles.linkText}>Milk Availability</Text>
+              <Text style={styles.linkText}>Stock Entry</Text>
               <Text style={styles.linkArrow}>›</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.linkButton}>
+            <TouchableOpacity
+              style={styles.linkButton}
+              onPress={() => navigation.navigate('BookItems0')}
+            >
+              <Text style={styles.linkIcon}>🥛</Text>
+              <Text style={styles.linkText}>Book Items</Text>
+              <Text style={styles.linkArrow}>›</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.linkButton}
+              onPress={() => navigation.navigate('Bookings')}
+            >
               <Text style={styles.linkIcon}>📋</Text>
               <Text style={styles.linkText}>Bookings</Text>
               <Text style={styles.linkArrow}>›</Text>
@@ -155,6 +247,16 @@ function HomeScreen() {
               <Text style={styles.linkText}>My Profile</Text>
               <Text style={styles.linkArrow}>›</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.linkButton}
+              onPress={handleLogout}
+            >
+              <Text style={styles.linkIcon}>🚪</Text>
+              <Text style={styles.linkText}>Logout</Text>
+              <Text style={styles.linkArrow}>›</Text>
+            </TouchableOpacity>
+
           </>
         )}
       </View>

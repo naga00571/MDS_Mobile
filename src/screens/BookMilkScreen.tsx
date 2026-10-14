@@ -17,6 +17,9 @@ import {
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import type {RootStackParamList} from '../../App';
 
+import {API_BASE_URL} from '../api/apiConfig';
+import {getUserId} from '../auth/authStorage';
+
 
 type CommunityInventory = {
   COMMUNITY_ID: number;
@@ -53,9 +56,8 @@ type Props = NativeStackScreenProps<
 // --------------------------------------------------
 // Temporary logged-in user details
 // --------------------------------------------------
-
-const userID = 1002;
-const userRole = 'CUSTOMER';
+//const userID = 1002;
+//const userRole = 'CUSTOMER';
 
 
 // --------------------------------------------------
@@ -82,6 +84,8 @@ function BookMilkScreen({route, navigation}: Props) {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const [userId, setUserId] = useState<number | null>(null);
+
   const [bookingQty, setBookingQty] = useState(1);
 
   const [fulfillmentType, setFulfillmentType] =
@@ -91,10 +95,26 @@ function BookMilkScreen({route, navigation}: Props) {
   // --------------------------------------------------
   // Get today's inventory
   // --------------------------------------------------
-
   useEffect(() => {
     getTodaysCommunityInventory();
   }, []);
+
+  // ----- get loggedin-user id from session : START ----
+  useEffect(() => {
+    const loadUserId = async () => {
+      const loggedInUserId = await getUserId();
+
+      console.log(
+        'BOOK MILK - LOGGED-IN USER ID:',
+        loggedInUserId,
+      );
+
+      setUserId(loggedInUserId);
+    };
+
+    loadUserId();
+  }, []);
+  // ----- get loggedin-user id from session : END ----
 
 
   const getTodaysCommunityInventory = async () => {
@@ -104,7 +124,7 @@ function BookMilkScreen({route, navigation}: Props) {
       setIsLoading(true);
 
       const response = await fetch(
-        'http://10.0.2.2:8000/api/community-todays-availability/',
+        `${API_BASE_URL}/api/community-todays-availability/`,
       );
 
       if (!response.ok) {
@@ -149,11 +169,13 @@ function BookMilkScreen({route, navigation}: Props) {
   // --------------------------------------------------
   // Filter today's inventory
   // by logged-in customer's community
+  // sp_fn_get_todays_community_milk_inventory() -> returns today's inventory records.
+  // item.TODAY_DATE === item.AVAILABILITY_DATE &&  <--- optional
   // --------------------------------------------------
-
   const selectedCommunity = inventoryData.find(
     item =>
       item.COMMUNITY_ID === communityId &&
+      item.TODAY_DATE === item.AVAILABILITY_DATE &&
       item.IS_ACTIVE === true &&
       item.IS_DELETE === false,
   );
@@ -244,6 +266,14 @@ function BookMilkScreen({route, navigation}: Props) {
         return;
     }
 
+    if (userId === null) {
+      Alert.alert(
+        'Session Error',
+        'Logged-in user information is not available. Please login again.',
+      );
+      return;
+    }
+
     if (remainingQty <= 0) {
         Alert.alert(
             'Milk Unavailable',
@@ -267,14 +297,14 @@ function BookMilkScreen({route, navigation}: Props) {
         console.log('CREATING BOOKING RESERVATION...');
 
         const response = await fetch(
-            'http://10.0.2.2:8000/api/bookings/reserve',
+            `${API_BASE_URL}/api/bookings/reserve`,
             {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                customer_id: userID,
+                customer_id: userId,
                 community_id: communityId,
                 item_name: ITEM_NAME,
                 booking_qty: bookingQty,
@@ -328,7 +358,7 @@ function BookMilkScreen({route, navigation}: Props) {
         console.log('RESERVATION ID:', reservationId);
 
         navigation.navigate('Payment', {
-            userId: userID,
+            userId: userId,
             communityId: selectedCommunity.COMMUNITY_ID,
             bookingId: Number(bookingId),
             reservationId: Number(reservationId),
@@ -551,39 +581,39 @@ function BookMilkScreen({route, navigation}: Props) {
 
           <View style={styles.quantityRow}>
 
-  <Text style={styles.quantityLabel}>
-    Select Quantity
-  </Text>
+            <Text style={styles.quantityLabel}>
+              Select Quantity
+            </Text>
 
-  <View style={styles.quantitySelector}>
+            <View style={styles.quantitySelector}>
 
-    <TouchableOpacity
-      style={styles.smallQuantityButton}
-      onPress={decreaseQuantity}
-      disabled={bookingQty <= 1}
-    >
-      <Text style={styles.smallQuantityButtonText}>
-        −
-      </Text>
-    </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.smallQuantityButton}
+                onPress={decreaseQuantity}
+                disabled={bookingQty <= 1}
+              >
+                <Text style={styles.smallQuantityButtonText}>
+                  −
+                </Text>
+              </TouchableOpacity>
 
-    <Text style={styles.smallQuantityValue}>
-      {bookingQty} Ltr
-    </Text>
+              <Text style={styles.smallQuantityValue}>
+                {bookingQty} Ltr
+              </Text>
 
-    <TouchableOpacity
-      style={styles.smallQuantityButton}
-      onPress={increaseQuantity}
-      disabled={bookingQty >= remainingQty}
-    >
-      <Text style={styles.smallQuantityButtonText}>
-        +
-      </Text>
-    </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.smallQuantityButton}
+                onPress={increaseQuantity}
+                disabled={bookingQty >= remainingQty}
+              >
+                <Text style={styles.smallQuantityButtonText}>
+                  +
+                </Text>
+              </TouchableOpacity>
 
-  </View>
+            </View>
 
-</View>
+          </View>
 
 
           {/* Fulfillment */}

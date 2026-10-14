@@ -19,6 +19,8 @@ import {
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import type {RootStackParamList} from '../../App';
 
+import {API_BASE_URL} from '../api/apiConfig';
+
 type Props = NativeStackScreenProps<
     RootStackParamList,
     'CommunityDetails'
@@ -76,7 +78,7 @@ function CommunityDetailsScreen({route, navigation}: Props) {
       setIsSaving(true);
 
       const response = await fetch(
-        'http://10.0.2.2:8000/api/community/',
+        `${API_BASE_URL}/api/community/`,
         {
           method: 'POST',
           headers: {

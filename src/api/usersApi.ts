@@ -9,6 +9,7 @@ export interface CreateUserRequest {
   latitude?: number | null;
   longitude?: number | null;
   user_role: string;
+  community_id: number;
 }
 
 

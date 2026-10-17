@@ -165,7 +165,7 @@ const LoginWithPasscodeScreen = ({navigation}: Props) => {
       <View style={styles.header}>
 
         <Text style={styles.headerTitle}>
-          MILK DELIVERY
+          ADITI ORGANIC DAIRY
         </Text>
 
       </View>
@@ -185,6 +185,12 @@ const LoginWithPasscodeScreen = ({navigation}: Props) => {
         {/* Login Card */}
 
         <View style={styles.card}>
+
+          <Image
+            source={require('../assets/images/logo3.jpg')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
 
           <Text style={styles.title}>
             Welcome Back
@@ -427,6 +433,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+
+  logo: {
+    width: 120,
+    height: 120,
+    alignSelf: 'center',
+    marginBottom: 12,
   },
 
 });

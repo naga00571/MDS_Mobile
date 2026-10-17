@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {
   Alert,  
   Image,
+  Modal,
   ScrollView,
   StyleSheet,
   Text,
@@ -24,6 +25,10 @@ import {
     GetUsersResponse,
 } from '../api/usersApi';
 
+import {
+  getActiveCommunities,
+  ActiveCommunity,
+} from '../api/communitiesApi';
 
 type Props = NativeStackScreenProps<
   RootStackParamList,
@@ -48,6 +53,11 @@ const UserManagementScreen = ({navigation}: Props) => {
   // [ CREATING... ]   ← disabled
 
   const [userList, setUserList] = useState<GetUsersResponse[]>([]);
+
+  const [communities, setCommunities] = useState<ActiveCommunity[]>([]);
+  const [selectedCommunityId, setSelectedCommunityId] = useState<number | null>(null);
+  const [isCommunityDropdownVisible, setIsCommunityDropdownVisible] = useState(false);
+  const [isLoadingCommunities, setIsLoadingCommunities] = useState(false);
 
   // Temporary user list data for UI development.
   // This will come from the backend API later.
@@ -107,6 +117,11 @@ const UserManagementScreen = ({navigation}: Props) => {
         return;
     }
 
+    if (selectedCommunityId === null) {
+      Alert.alert('Validation', 'Please select a community.');
+        return;
+    }
+
     // -----------------------------
     // Start Create User
     // -----------------------------
@@ -115,19 +130,15 @@ const UserManagementScreen = ({navigation}: Props) => {
     try {
 
         const result = await createUserWithPassCode({
-
             mobile_number: mobileNumber,
             first_name: firstName.trim(),
-            last_name:
-                lastName.trim() || null,
-            address:
-                address.trim() || null,
-            address2:
-                address2.trim() || null,
+            last_name: lastName.trim() || null,
+            address: address.trim() || null,
+            address2: address2.trim() || null,
             latitude: null,
             longitude: null,
             user_role: 'CUSTOMER',
-
+            community_id: selectedCommunityId,
         });
 
 
@@ -151,6 +162,7 @@ const UserManagementScreen = ({navigation}: Props) => {
                     setLastName('');
                     setAddress('');
                     setAddress2('');
+                    setSelectedCommunityId(null);
 
                     // Go to User List    
                     setActiveTab('LIST');
@@ -220,9 +232,32 @@ const UserManagementScreen = ({navigation}: Props) => {
   };
   // loadUsers (sp_fn_get_users()) : END
 
+  // loadCommunities : START ---------------
+  const loadCommunities = async () => {
+    try {
+      setIsLoadingCommunities(true);
+
+      const data = await getActiveCommunities();
+      setCommunities(data);
+    } catch (error) {
+
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Failed to load communities.';
+
+      Alert.alert('Error', message);
+
+    } finally {
+      setIsLoadingCommunities(false);
+    }
+  };
+  // loadCommunities : END ---------------
+
   // The [] means: Run loadUsers() once when UserManagementScreen is loaded.
   useEffect(() => {
     loadUsers();
+    loadCommunities();
   }, []);
 
 
@@ -237,9 +272,9 @@ const UserManagementScreen = ({navigation}: Props) => {
 
         <View style={styles.card}>
 
-          <Text style={styles.sectionTitle}>
+          {/* <Text style={styles.sectionTitle}>
             Create User
-          </Text>
+          </Text> */}
 
           <Text style={styles.sectionDescription}>
             Add a new customer to the MDS application.
@@ -286,7 +321,7 @@ const UserManagementScreen = ({navigation}: Props) => {
 
           {/* Last Name */}
 
-          <Text style={styles.inputLabel}>
+          {/* <Text style={styles.inputLabel}>
             Last Name
           </Text>
 
@@ -297,7 +332,7 @@ const UserManagementScreen = ({navigation}: Props) => {
             placeholder="Enter last name"
             placeholderTextColor="#999"
             autoCapitalize="words"
-          />
+          /> */}
 
 
           {/* Address */}
@@ -321,7 +356,7 @@ const UserManagementScreen = ({navigation}: Props) => {
 
           {/* Address 2 */}
 
-          <Text style={styles.inputLabel}>
+          {/* <Text style={styles.inputLabel}>
             Address 2
           </Text>
 
@@ -335,7 +370,42 @@ const UserManagementScreen = ({navigation}: Props) => {
             placeholder="Enter additional address"
             placeholderTextColor="#999"
             multiline
-          />
+          /> */}
+
+          
+          {/* Community Selection */}
+          <Text style={styles.inputLabel}>Community *</Text>
+
+          <TouchableOpacity
+            style={[
+              styles.input,
+              {
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              },
+            ]}
+            onPress={() => {
+              if (!isLoadingCommunities) {
+                setIsCommunityDropdownVisible(true);
+              }
+            }}
+            disabled={isLoadingCommunities || isCreating}>
+            <Text
+              style={{
+                color: selectedCommunityId !== null ? '#222' : '#888',
+              }}>
+              {isLoadingCommunities
+                ? 'Loading communities...'
+                : communities.find(
+                    community => community.id === selectedCommunityId,
+                  )?.community_name ?? 'Select Community'}
+            </Text>
+            <Text style={{color: '#666', fontSize: 16, marginLeft: 8}}>
+            ▼
+            </Text>
+          </TouchableOpacity>
+
 
 
           {/* Role */}
@@ -626,6 +696,78 @@ const UserManagementScreen = ({navigation}: Props) => {
 
       </View>
 
+      
+      <Modal
+        visible={isCommunityDropdownVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setIsCommunityDropdownVisible(false)}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.45)',
+            justifyContent: 'center',
+            padding: 24,
+          }}>
+          <View
+            style={{
+              backgroundColor: '#fff',
+              borderRadius: 12,
+              padding: 16,
+              maxHeight: '70%',
+            }}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: 'bold',
+                marginBottom: 12,
+                color: '#222',
+              }}>
+              Select Community
+            </Text>
+
+            <ScrollView>
+              {communities.map(community => (
+                <TouchableOpacity
+                  key={community.id}
+                  style={{
+                    paddingVertical: 14,
+                    borderBottomWidth: 1,
+                    borderBottomColor: '#eee',
+                  }}
+                  onPress={() => {
+                    setSelectedCommunityId(community.id);
+                    setIsCommunityDropdownVisible(false);
+                  }}>
+                  <Text style={{fontSize: 16, color: '#222'}}>
+                    {community.community_name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+
+              {communities.length === 0 && (
+                <Text style={{color: '#888', paddingVertical: 12}}>
+                  No active communities available.
+                </Text>
+              )}
+            </ScrollView>
+
+            <TouchableOpacity
+              style={{
+                marginTop: 12,
+                padding: 12,
+                alignItems: 'center',
+              }}
+              onPress={() => setIsCommunityDropdownVisible(false)}>
+              <Text style={{color: '#1976D2', fontWeight: '600'}}>
+                Cancel
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+
     </SafeAreaView>
 
   );
@@ -663,7 +805,7 @@ const styles = StyleSheet.create({
 
 
   header: {
-    minHeight: 65,
+    minHeight: 54, // 65
 
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -703,7 +845,7 @@ const styles = StyleSheet.create({
   ---------------------------- */
 
   tabContainer: {
-    marginTop: 16,
+    marginTop: 6,
     marginHorizontal: 16,
 
     flexDirection: 'row',
@@ -750,16 +892,16 @@ const styles = StyleSheet.create({
   ---------------------------- */
 
   card: {
-    marginTop: 16,
+    marginTop: 8,
     marginHorizontal: 16,
 
-    marginBottom: 30,
+    marginBottom: 20,
 
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
 
     borderRadius: 20,
 
-    padding: 22,
+    padding: 20, // 22
 
     elevation: 5,
 
@@ -795,54 +937,40 @@ const styles = StyleSheet.create({
 
   divider: {
     height: 1,
-
     backgroundColor: '#E5E5E5',
-
-    marginVertical: 16,
+    marginVertical: 8, // 10
   },
 
 
   inputLabel: {
     fontSize: 15,
-
     fontWeight: '600',
-
     color: '#333',
-
-    marginBottom: 6,
-
-    marginTop: 12,
+    marginBottom: 5, //6
+    marginTop: 10, //12
   },
 
 
   input: {
     borderWidth: 1,
-
     borderColor: '#CCCCCC',
-
     borderRadius: 10,
-
     height: 50,
-
     paddingHorizontal: 12,
-
     fontSize: 16,
-
     backgroundColor: '#FFFFFF',
   },
 
 
   multilineInput: {
-    height: 80,
-
-    paddingTop: 12,
-
+    height: 70,
+    paddingTop: 10,
     textAlignVertical: 'top',
   },
 
 
   roleContainer: {
-    height: 50,
+    height: 45,
 
     borderWidth: 1,
 
@@ -859,54 +987,42 @@ const styles = StyleSheet.create({
 
 
   roleText: {
-    fontSize: 16,
-
+    fontSize: 15,
     fontWeight: '600',
-
     color: '#555',
   },
 
 
   infoBox: {
-    marginTop: 20,
-
+    marginTop: 10,
     padding: 14,
-
     borderRadius: 12,
-
     backgroundColor: '#EAF5FF',
-
     borderWidth: 1,
-
     borderColor: '#C9E6FA',
   },
 
 
   infoTitle: {
     fontSize: 15,
-
     fontWeight: '700',
-
     color: '#1769C2',
   },
 
 
   infoText: {
     marginTop: 4,
-
     fontSize: 13,
-
-    lineHeight: 19,
-
+    lineHeight: 20,
     color: '#555',
   },
 
 
   primaryButton: {
-    marginTop: 25,
+    marginTop: 15,
     backgroundColor: '#1769C2',
     borderRadius: 12,
-    height: 52,
+    height: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -914,7 +1030,7 @@ const styles = StyleSheet.create({
 
   primaryButtonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
   },
 

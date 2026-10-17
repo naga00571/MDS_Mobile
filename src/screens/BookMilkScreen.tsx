@@ -833,9 +833,9 @@ const styles = StyleSheet.create({
 
 
   stepsContainer: {
-    marginTop: 15,
+    marginTop: 8, // 15
     marginHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 6, // 12
     paddingHorizontal: 10,
     borderRadius: 15,
     backgroundColor: 'rgba(255,255,255,0.95)',
@@ -903,12 +903,12 @@ const styles = StyleSheet.create({
 
 
   card: {
-    marginTop: 15,
+    marginTop: 8, // 15
     marginHorizontal: 16,
-    marginBottom: 20,
+    marginBottom: 6, // 20
     backgroundColor: 'rgba(255,255,255,0.95)',
     borderRadius: 20,
-    padding: 22,
+    padding: 16, // 22
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: {
@@ -978,11 +978,11 @@ const styles = StyleSheet.create({
 
 
   sectionLabel: {
-    fontSize: 16,
+    fontSize: 15, // 16
     fontWeight: '700',
     color: '#333333',
-    marginTop: 18,
-    marginBottom: 8,
+    marginTop: 10, // 18
+    marginBottom: 5, // 8
   },
 
 

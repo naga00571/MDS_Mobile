@@ -816,7 +816,7 @@ const PaymentScreen = ({navigation, route}: Props) => {
 
         {/* Payment Method */}
 
-        <View style={styles.card}>
+        {/* <View style={styles.card}>
 
           <Text style={styles.sectionTitle}>
             Payment Method
@@ -834,7 +834,7 @@ const PaymentScreen = ({navigation, route}: Props) => {
 
           </View>
 
-        </View>
+        </View> */}
 
 
         {/* Pay Button */}
@@ -857,18 +857,18 @@ const PaymentScreen = ({navigation, route}: Props) => {
         </TouchableOpacity>
 
         {/* Temporary SDK CHeck UPI Apps Button */}  
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.payButton}
           onPress={checkInstalledUPIApps}
         >
           <Text style={styles.payButtonText}>
             CHECK UPI APPS
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         {/* Temporary SDK CHeck UPI Apps Button */}   
 
         {/* Temporary SDK Test Button */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.payButton}
           onPress={initializePhonePe}
         >
@@ -876,7 +876,7 @@ const PaymentScreen = ({navigation, route}: Props) => {
           <Text style={styles.payButtonText}>
             TEST PHONEPE SDK
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
 
 
@@ -957,14 +957,14 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: '#E5E5E5',
-    marginVertical: 14,
+    marginVertical: 10, // 14
   },
 
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: 7,
+    marginVertical: 5, // 7
   },
 
   label: {

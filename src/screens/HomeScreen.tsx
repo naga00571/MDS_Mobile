@@ -82,7 +82,7 @@ function HomeScreen() {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerRow}>
-            <Text style={styles.appTitle}>🥛 MILK DELIVERY</Text>
+            <Text style={styles.appTitle}>🥛 ADITI ORGANIC DAIRY </Text>
             {/* {!isCustomer && ( */}
                 <Text style={styles.roleBadge}>{userRole}</Text>
             {/* )} */}

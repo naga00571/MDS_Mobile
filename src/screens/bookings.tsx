@@ -489,13 +489,13 @@ const BookingsInfo = ({navigation}: Props) => {
     >
 
       {/* ===================================================
-          HEADER
+          HEADER : navigation.goBack()
       =================================================== */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() =>
-            navigation.goBack()
+            navigation.navigate('Home')
           }
         >
           <Text style={styles.backIcon}> ← </Text>

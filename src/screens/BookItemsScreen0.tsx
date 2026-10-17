@@ -544,14 +544,13 @@ const styles = StyleSheet.create({
   // --------------------------------------------------
 
   card: {
-    marginTop: 20,
+    marginTop: 10, // 20
     marginHorizontal: 16,
 
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
 
-    borderRadius: 20,
-
-    padding: 22,
+    borderRadius: 16, // 20
+    padding: 20, // 22
 
     elevation: 5,
 
@@ -577,7 +576,7 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: '#E5E5E5',
-    marginVertical: 16,
+    marginVertical: 15, // 16
   },
 
 
@@ -601,7 +600,7 @@ const styles = StyleSheet.create({
 
 
   spacing: {
-    height: 10,
+    height: 10, // 10
   },
 
 
